@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def landing():
-    return render_template('index.html')  # Ensure your landing page is named 'index.html'
+    return render_template('index.html')  #Ensure your landing page is named 'index.html'
 
 @app.route('/upload') #link in js
 def upload():

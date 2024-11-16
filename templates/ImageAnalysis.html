@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="..//static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Please upload your image for analysis</h1>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            
+            <!-- Image Type Selection (add handler for options) -->
+            <label for="imageType">Select Image Type:</label>
+            <select id="imageType" name="imageType" required>
+                <option value="soil">Soil</option>  <!-- remove later for js func -->
+                <option value="crop">Crop</option>
+            </select>
+
+            <!-- File Upload: take input and pass  to server later -->
+            <label for="imageUpload">Choose an Image:</label>
+            <input type="file" id="imageUpload" name="imageUpload" accept="image/*" required>
+
+         
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>
