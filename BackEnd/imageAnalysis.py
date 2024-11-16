@@ -1,10 +1,13 @@
 import os
+from dotenv import load_dotenv
 import google.generativeai as genai
 from PIL import Image
 
+load_dotenv()
+
 # Configure the API key
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-print(GOOGLE_API_KEY)
+
 genai.configure(api_key=GOOGLE_API_KEY)
 
 def process_image_with_gemini(image_path):
