@@ -1,0 +1,90 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khula</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        button {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 1em;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to KHULA</h1>
+        <h2> A platform to help you, the farmer get the best advice for your next farming project!</h2>
+        <p>Select an option to get started:</p>
+        <button id="uploadButton">Upload Crop/Soil Image</button>
+        <button id="analysisButton">Condition Analysis</button>
+    </div>
+
+    <script>
+        // Add event listeners for the buttons
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            alert("Redirecting to Upload Image Page...");
+            // You can redirect to the upload page or implement a popup here.
+            window.location.href = "/upload";
+        });
+
+        document.getElementById('analysisButton').addEventListener('click', function() {
+            alert("Redirecting to Condition Analysis Page...");
+            // You can redirect to the analysis page or implement a popup here.
+            window.location.href = "/analysis";
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farming Assistant</title>
+    <link rel="stylesheet" href="FrontEnd/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Farming Assistant</h1>
+        <p>Select an option to get started:</p>
+        <button id="uploadButton">Upload Crop/Soil Image</button>
+        <button id="analysisButton">Condition Analysis</button>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
