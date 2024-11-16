@@ -2,7 +2,7 @@
 import os
 from werkzeug.utils import secure_filename
 
-Uploaded_image = "/home/thando/Documents/Khula/static/uploads"
+Uploaded_image = "../Khula/static/uploads"
 # valid_extentions = {'jpeg','jpg','png'}
 
 """
