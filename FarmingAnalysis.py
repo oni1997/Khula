@@ -104,36 +104,26 @@ class FarmingAnalyzer:
         
         return self.model.score(X_test, y_test)
 
-    def get_ai_recommendations(self, input_data: Dict[str, Any], prediction: Dict[str, float]) -> Dict[str, str]:
-        """Get personalized recommendations from Gemini AI, returned as structured data
-        
-        Returns:
-            Dict with keys: risks, preparations, variety, care, harvest, upgrade_message
-        """
+    def get_ai_recommendations(self, input_data: Dict[str, Any], prediction: Dict[str, float]) -> str:
+        """Get personalized recommendations from Gemini AI"""
         if not self.genai_model:
-            return {
-                "error": "AI recommendations not available - API key not configured."
-            }
+            return "AI recommendations not available - API key not configured."
 
-        base_context = f"""
-        As an agricultural expert, analyze the following farming scenario:
+        prompt = f"""
+        As an agricultural expert, provide specific farming recommendations for:
         Location: {input_data['location']}
         Plant Type: {input_data['plant_type']}
         Plot Size: {input_data['plot_size']}
         Harvest Month: {input_data['harvest_month']}
 
-        Analysis Results:
+        Based on our analysis:
         - Predicted Yield: {prediction['yield_prediction']} tons per hectare
         - Success Rating: {prediction['success_rating']}/10
-        """
 
-        prompts = {
-            "risks": f"{base_context}\nProvide key risks and challenges for this specific combination.",
-            
-            "preparations": f"{base_context}\nProvide recommended key preparations and best practices for these specifications.",
-            
-            "variety": f"""{base_context}
-            Recommend the most appropriate maize variety for this season and plot size to maximize yield. Choose from:
+        Please provide:
+        1. Key risks and challenges for this specific combination
+        2. Recommended key preparations and best practices for these specifications
+        3. Recommended maize variety for this season and plot size to maximize yield (choose the most appropriate from the list below):
             - ACTIVONEW (early double-purpose variety)
             - AKANTO (medium late dent corn for grain and silage)
             - AMBIENT (early variety with starch)
@@ -158,28 +148,21 @@ class FarmingAnalyzer:
             - PURPLE (high-yielding silage and biogas maize)
             - SHINY (great yield and look)
             - VARIANTAL / INDEM 1355NEW (all-in-one for silage and grain)
-            - WAKEFIELD (dent maize for high grain)""",
-            
-            "care": f"{base_context}\nProvide optimal care instructions during growing season for these specifications.",
-            
-            "harvest": f"{base_context}\nProvide harvesting tips for these specifications."
-        }
+            - WAKEFIELD (dent maize for high grain)
+        4. Optimal care instructions during growing season for these specifications
+        5. Harvesting tips for these specifications
+        End here do not give any further information except for saying Upgrade your package to get more in-depth support and recommendations tailored to your specific soil type, weather conditions, and maize variety. Keep the response concise and practical.
+        """
 
+
+    
         try:
-            recommendations = {}
-            for key, prompt in prompts.items():
-                response = self.genai_model.generate_content(prompt)
-                recommendations[key] = response.text.strip()
-            
-            # Add upgrade message
-            recommendations["upgrade_message"] = "Upgrade your package to get more in-depth support and recommendations tailored to your specific soil type, weather conditions, and maize variety."
-            
-            return recommendations
-        
+            response = self.genai_model.generate_content(prompt)
+            return response.text
         except Exception as e:
-            return {
-                "error": f"Unable to get AI recommendations: {str(e)}"
-            }
+            return f"Unable to get AI recommendations: {str(e)}"
+
+
     def predict(self, input_data: Dict[str, Any]) -> Dict[str, float]:
         # Plot size definitions and modifiers
         plot_sizes = {

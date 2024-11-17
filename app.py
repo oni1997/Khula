@@ -86,7 +86,7 @@ def create_app():
 
     @app.route('/submit_form', methods=['POST'])
     def submit_form():
-        """Handle form submission and generate predictions with structured AI recommendations"""
+        """Handle form submission and generate predictions"""
         try:
             # Get form data
             input_data = {
@@ -103,54 +103,22 @@ def create_app():
             # Make prediction
             prediction = analyzer.predict(input_data)
             
-            # Get structured AI recommendations
-            recommendations = analyzer.get_ai_recommendations(input_data, prediction)
+            # Get AI recommendations
+            ai_recommendations = analyzer.get_ai_recommendations(input_data, prediction)
 
-            # Check for errors in recommendations
-            if "error" in recommendations:
-                return render_template(
-                    'prediction_result.html',
-                    location=input_data['location'],
-                    plant_type=input_data['plant_type'],
-                    plot_size=input_data['plot_size'],
-                    harvest_month=input_data['harvest_month'],
-                    yield_prediction=prediction['yield_prediction'],
-                    success_rating=prediction['success_rating'],
-                    error=recommendations["error"]
-                )
-
-            # If no errors, render template with all recommendations
             return render_template(
                 'prediction_result.html',
-                # Input data
                 location=input_data['location'],
                 plant_type=input_data['plant_type'],
                 plot_size=input_data['plot_size'],
                 harvest_month=input_data['harvest_month'],
-                
-                # Predictions
                 yield_prediction=prediction['yield_prediction'],
                 success_rating=prediction['success_rating'],
-                
-                # Structured recommendations
-                risks=recommendations.get('risks'),
-                preparations=recommendations.get('preparations'),
-                variety=recommendations.get('variety'),
-                care=recommendations.get('care'),
-                harvest=recommendations.get('harvest'),
-                upgrade_message=recommendations.get('upgrade_message')
+                ai_recommendations=ai_recommendations
             )
 
         except Exception as e:
-            app.logger.error(f"Error in submit_form: {str(e)}")
-            return render_template(
-                'prediction_result.html',
-                error=f"Error processing request: {str(e)}",
-                location=input_data.get('location'),
-                plant_type=input_data.get('plant_type'),
-                plot_size=input_data.get('plot_size'),
-                harvest_month=input_data.get('harvest_month')
-            ), 500
+            return f"Error processing request: {str(e)}", 500
 
     @app.route('/view_image/<filename>')
     def view_image(filename):
