@@ -8,16 +8,33 @@
 
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
+<div class="logo-container">
+    <img src="..//static/uploads/logo-fotor-bg-remover-202411177366.png" alt="Farming Assistant Logo">
+</div>
 <body>
     <div class="container">
-        <h1>Welcome to <span class="plant-green">KHULA</span></h1>
-        <h2> A platform to help you, the farmer get the best advice for your next farming project!</h2>
-        <p>Select an option to get started:</p>
-        <div class="buttons">
-            <button id="uploadButton">Upload Crop/Soil Image</button>
-            <button id="analysisButton">Condition Analysis</button>
+        <!-- <h1>Welcome to <span class="plant-green">KHULA</span></h1> -->
+        <h2> Smart, up-to-date Data for your next farming project!</h2>
+        <p>Please select an option that best describes your needs:</p>
+
+        <div class="button-container">
+            <!-- Upload Image Button -->
+            <a href="/upload_image" class="image-button">
+                <img src="..//static/uploads/sprout.gif" alt="Upload Image">
+                <!-- <span>Upload Crop/Soil Image</span> -->
+            </a>
+        
+            <!-- Condition Analysis Button -->
+            <a href="/condition_analysis" class="image-button">
+                <img src="..//static/uploads/organic(2).gif" alt="Condition Analysis">
+                <!-- <span>Condition Analysis</span> -->
+            </a>
         </div>
 
+        <div class="buttons">
+            <button id="uploadButton">Analyse your image</button>
+            <button id="analysisButton">Analyse farming Data </button>
+        </div>
     </div>
 
     <script src="../static/js/app.js"></script>

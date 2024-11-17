@@ -5,10 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image</title>
     <link rel="stylesheet" href="../static/css/style.css">
+
+    <style>
+        select {
+            background-color: #ffff; /* Green background for dropdown */
+            color: #333; 
+            border: 2px solid #69d569; 
+            border-radius: 5px; 
+            padding: 8px 12px; 
+            font-size: 1em; 
+            cursor: pointer; 
+            appearance: none; 
+            outline: none; 
+        }
+    
+        select:focus {
+            border-color: #b1f7b1; /* Highlight border on focus */
+            box-shadow: 0 0 5px #56b456; /* Add a subtle glow effect */
+        }
+    </style>
+    
 </head>
 <body>
     <div class="container">
         <h1>Please upload your image for analysis</h1>
+
         <form action="/upload" method="POST" enctype="multipart/form-data">
 
             <!-- Image Type Selection (add handler for options) -->

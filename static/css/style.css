@@ -2,7 +2,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f9f4f4e7;
+    background-color: #f9f4f4;
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,7 +10,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    color: #333;
+    color: #3f3c3c;
 }
 
 h1 {
@@ -33,14 +33,14 @@ button {
     padding: 15px 30px;
     font-size: 1em;
     color: white;
-    background-color: #007bff;
+    background-color: #2cb42cec;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #89f889;
 }
 
 .plant-green{
@@ -77,7 +77,7 @@ input, select, button {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #2cb42cec;
     color: white;
     cursor: pointer;
 }
@@ -89,7 +89,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #89f889;
 }
 
 }
@@ -140,6 +140,56 @@ select {
     display: block;
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #89f889;
 }
+}
+
+/* Logo Styling */
+.logo-container {
+    text-align: center; /* Centers the logo horizontally */
+    margin-bottom: 20px; /* Adds spacing below the logo */
+}
+
+.logo-container img {
+    max-width: 300%; /* Adjust size as needed */
+    height: auto; /* Maintains the aspect ratio */
+    display: inline-block; /* Ensures proper alignment */
+}
+
+/* Button styling */
+.button-container {
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    gap: 20%; /* Adds space between the buttons */
+    margin-top: 30px; /* Adjust spacing above buttons */
+}
+
+.image-button {
+    text-align: center; /* Centers text and image within each button */
+    text-decoration: none; /* Removes underline from links */
+}
+
+.image-button img {
+    width: 100px; /* Adjust size as needed */
+    height: auto; /* Maintains the aspect ratio */
+    display: block;
+    margin: 0 auto 8px; /* Centers image and adds spacing below */
+    border: 2px solid transparent; /* Adds border for hover effect */
+    border-radius: 8px; /* Optional: Rounds corners of images */
+    cursor: pointer;
+}
+
+.image-button img:hover {
+    border-color: #89f889; /* Blue border on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+    transition: all 0.2s ease-in-out;
+}
+
+.image-button span {
+    font-size: 0.9em; /* Adjust text size */
+    color: #333; /* Text color */
+}
+
+.image-button span:hover {
+    color: #89f889; /* Change text color on hover */
 }
