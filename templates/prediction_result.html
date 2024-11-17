@@ -64,18 +64,59 @@
                 </div>
             </div>
 
-            <!-- AI Recommendations Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis</h2>
-                <div class="space-y-4">
-                    {% if ai_recommendations %}
-                        <p class="text-gray-700">{{ ai_recommendations }}</p>
-                    {% else %}
-                        <p class="text-gray-500">No AI recommendations available at the moment.</p>
-                    {% endif %}
+            <!-- AI Recommendations Section -->
+            {% if error %}
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <p class="text-red-600">{{ error }}</p>
                 </div>
-            </div>
+            {% else %}
+                <!-- Risks and Challenges -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Risks and Challenges</h2>
+                    <div class="prose text-gray-700">
+                        {{ risks or 'No risks analysis available.' }}
+                    </div>
+                </div>
 
+                <!-- Preparations -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Recommended Preparations</h2>
+                    <div class="prose text-gray-700">
+                        {{ preparations or 'No preparation recommendations available.' }}
+                    </div>
+                </div>
+
+                <!-- Variety Recommendation -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Recommended Maize Variety</h2>
+                    <div class="prose text-gray-700">
+                        {{ variety or 'No variety recommendations available.' }}
+                    </div>
+                </div>
+
+                <!-- Care Instructions -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Care Instructions</h2>
+                    <div class="prose text-gray-700">
+                        {{ care or 'No care instructions available.' }}
+                    </div>
+                </div>
+
+                <!-- Harvesting Tips -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Harvesting Tips</h2>
+                    <div class="prose text-gray-700">
+                        {{ harvest or 'No harvesting tips available.' }}
+                    </div>
+                </div>
+
+                <!-- Upgrade Message -->
+                <div class="bg-yellow-50 rounded-lg shadow-md p-6 mb-6">
+                    <div class="text-yellow-800">
+                        {{ upgrade_message }}
+                    </div>
+                </div>
+            {% endif %}
 
             <!-- Action Buttons -->
             <div class="mt-8 flex justify-center space-x-4">
