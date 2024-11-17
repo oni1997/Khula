@@ -18,12 +18,14 @@
                 <option value="crop">Crop</option>
             </select>
 
-            <!-- File Upload: take input and pass  to server later -->
-            <label for="imageUpload">Choose an Image:</label>
-            <input type="file" id="imageUpload" name="imageUpload" accept="image/*" required>
-
-         
-            <button type="submit">Upload</button>
+            <label for="imageUpload" >Choose an Image:</label>
+            <input type="file" id="imageUpload" style="padding: 10px 20px;" name="imageUpload" accept="image/*" required>
+            
+            <div class="button-group">
+                <button type="submit" style="padding: 10px 20px;">Upload</button>
+                <button type="reset" style="padding: 10px 20px;">Reset</button>
+            </div>
+            
         </form>
     </div>
 </body>

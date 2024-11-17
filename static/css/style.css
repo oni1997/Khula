@@ -82,6 +82,12 @@ button {
     cursor: pointer;
 }
 
+.button-group {
+    display: flex; /* Use flexbox for horizontal alignment */
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 10px; /* Space between buttons */
+}
+
 button:hover {
     background-color: #0056b3;
 }
@@ -135,4 +141,5 @@ select {
 
 button:hover {
     background-color: #0056b3;
+}
 }
