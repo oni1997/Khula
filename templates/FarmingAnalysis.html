@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farming Data Input</title>
+    <link rel="stylesheet" href="..//static/css/style.css">
+</head>
+<body>
+    <h2 style="text-align: center;">Farming Data Input Form</h2>
+    <form method="POST" action="/submit_form">
+        <!-- Location (Compulsory) -->
+        <label for="location" class="required">Location</label>
+        <select id="location" name="location" required>
+            <option value="" disabled selected>Select your province</option>
+            <option value="Eastern Cape">Eastern Cape</option>
+            <option value="Free State">Free State</option>
+            <option value="Gauteng">Gauteng</option>
+            <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+            <option value="Limpopo">Limpopo</option>
+            <option value="Mpumalanga">Mpumalanga</option>
+            <option value="Northern Cape">Northern Cape</option>
+            <option value="North West">North West</option>
+            <option value="Western Cape">Western Cape</option>
+        </select>
+        <small class="helper-text">Where are you based?</small>
+
+        <!-- Plant Type (Compulsory for AI ML) -->
+        <label for="plantType" class="required">Plant Type</label>
+        <select id="plantType" name="plantType" required>
+            <option value="" disabled selected>Select plant type</option>
+            <option value="Maize">Maize</option>
+            <option value="Maize">Sorgum</option>
+            <option value="Maize">Spinach</option>
+            <option value="Maize">Carrot</option>
+            <option value="Maize">Potato</option>
+        </select>
+        <small class="helper-text">What type of harvest are you going for?</small>
+
+        <!-- Size of the Plot (Area values calculated separately based on pre-agreed size)-->
+        <label for="plotSize">Size of the Plot</label>
+        <select id="plotSize" name="plotSize">
+            <option value="" disabled selected>Select plot size</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select>
+        <small class="helper-text">How big is your space(estimate)?</small>
+
+        <!-- Harvest Month(optional for now)-->
+        <label for="harvestMonth">Intended Harvest Month</label>
+        <select id="harvestMonth" name="harvestMonth">
+            <option value="" disabled selected>Select a month</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+        </select>
+        <small class="helper-text">When do you want to start planting?</small>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

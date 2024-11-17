@@ -86,3 +86,53 @@ button:hover {
     background-color: #0056b3;
 }
 
+}
+
+/* Input form for datasets used my the model */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.required::after {
+    content: "*";
+    color: red;
+    margin-left: 4px;
+}
+
+.helper-text {
+    text-align: left;
+    font-size: 0.9em; 
+    font-style: italic; 
+    color: #6c757d; 
+    margin-top: -5px; 
+    margin-bottom: 15px;
+    display: block;
+
+button:hover {
+    background-color: #0056b3;
+}
