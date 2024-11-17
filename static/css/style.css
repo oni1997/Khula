@@ -22,7 +22,7 @@ h1 {
     text-align: center;
 }
 
-.buttons{
+.buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -43,9 +43,9 @@ button:hover {
     background-color: #89f889;
 }
 
-.plant-green{
-    color: #228B22; 
-    font-weight: bold; /*  maybe change later 
+.plant-green {
+    color: #228B22;
+    font-weight: bold;
 }
 
 /* Form styling */
@@ -92,9 +92,7 @@ button:hover {
     background-color: #89f889;
 }
 
-}
-
-/* Input form for datasets used my the model */
+/* Input form for datasets used by the model */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
@@ -132,16 +130,18 @@ select {
 
 .helper-text {
     text-align: left;
-    font-size: 0.9em; 
-    font-style: italic; 
-    color: #6c757d; 
-    margin-top: -5px; 
+    font-size: 0.9em;
+    font-style: italic;
+    color: #6c757d;
+    margin-top: -5px;
     margin-bottom: 15px;
     display: block;
+}
 
 button:hover {
     background-color: #89f889;
 }
+<<<<<<< HEAD
 }
 
 /* Logo Styling */
@@ -193,3 +193,84 @@ button:hover {
 .image-button span:hover {
     color: #89f889; /* Change text color on hover */
 }
+=======
+
+/* Analysis Results Page Styling */
+
+.analysis-type h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.detailed-analysis {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.detailed-analysis h3 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.detailed-analysis h4 {
+    font-size: 1.4em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.detailed-analysis p,
+.detailed-analysis ul {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.detailed-analysis ul {
+    padding-left: 20px;
+}
+
+.detailed-analysis li {
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: red;
+    background-color: #f8d7da;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.navigation {
+    margin-top: 30px;
+}
+
+.navigation button {
+    margin: 5px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.navigation button:hover {
+    background-color: #0056b3;
+}
+
+.navigation .analyze-btn {
+    background-color: #28a745;
+}
+
+.navigation .analyze-btn:hover {
+    background-color: #218838;
+}
+>>>>>>> b580428 (ai update)
