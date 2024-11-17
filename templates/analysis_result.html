@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Analysis Results</h1>
+        
+        <div class="analysis-type">
+            <h2>Image Type: {{ image_type | title }}</h2>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="analysis-content">
+            {% if analysis %}
+                {{ analysis | safe | replace('\n', '<br>') }}
+            {% else %}
+                <p>No analysis results available.</p>
+            {% endif %}
+        </div>
+
+        <div class="navigation">
+            <button onclick="window.location.href='/upload'" class="analyze-btn">
+                Analyze Another Image
+            </button>
+            <button onclick="window.location.href='/'" class="home-btn">
+                Return to Home
+            </button>
+        </div>
+    </div>
+
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>

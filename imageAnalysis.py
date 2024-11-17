@@ -5,7 +5,6 @@ from PIL import Image
 
 load_dotenv()
 
-# Configure the API key
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 genai.configure(api_key=GOOGLE_API_KEY)
@@ -18,13 +17,10 @@ def process_image_with_gemini(image_path):
         image_path (str): Path to the image file
     """
     try:
-        # Load the Gemini Pro Vision model
-        model = genai.GenerativeModel('gemini-1.5-pro-002')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # Open and prepare the image using PIL
         image = Image.open(image_path)
         
-        # Generate content from the image
         response = model.generate_content(
             contents=[
                 "Please analyze this image and describe what you see in detail, including:\n"
@@ -41,12 +37,3 @@ def process_image_with_gemini(image_path):
     except Exception as e:
         print(f"Error processing the image: {e}")
         return None
-
-# Use the function
-image_path = "../Test/istockphoto-1323415950-1024x1024.jpg"
-result = process_image_with_gemini(image_path)
-
-if result:
-    print("\nAnalysis Results:")
-    print("-----------------")
-    print(result)

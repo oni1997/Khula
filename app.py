@@ -1,69 +1,134 @@
-from flask import Flask, render_template,redirect, request, url_for
+import os
+from flask import Flask, render_template, redirect, request, url_for
+from FarmingAnalysis import FarmingAnalyzer
+from imageAnalysis import process_image_with_gemini
 from image_handler import save_image
 
+# Load environment variables
 
-app = Flask(__name__)
-
-@app.route('/')
-def landing():
-    return render_template('index.html')  
-
-# ------
-@app.route('/upload', methods=['GET','POST']) #updated with image handling.
-def upload():
-    if request.method == 'POST':
-        # Get form data
-        # image_type = request.form['imageType']
-        image_file = request.files['imageUpload']
-        saved_path = save_image(image_file) #save only jpeg img's for now
-
-
-        #re routing image to new page:
-        if saved_path:
-            filename = saved_path.split('/')[-1]
-            return redirect(url_for('view_image', filename=filename))
-            
-        else:
-            print("Error, file not saved")
-
-    return render_template('ImageAnalysis.html')
-
-# ------  
-@app.route('/form', methods=['GET'])
-def form():
-    return render_template('farmingAnalysis.html')
-
-@app.route('/submit_form', methods=['POST'])
-def submit_form():
-    # data for user input set
-    location = request.form.get('location')
-    plant_type = request.form.get('plantType')
-    plot_size = request.form.get('plotSize')
-    harvest_month = request.form.get('harvestMonth')
-
-    # Check for compulsory fields
-    if not location or not plant_type:
-        return "Error: Location and Plant Type are required!", 400
-
-    # Process form data (print for now)
-    print(f"Location: {location}")
-    print(f"Plant Type: {plant_type}")
-    print(f"Plot Size: {plot_size}")
-    print(f"Harvest Month: {harvest_month}")
-
-    # Redirect or display a confirmation (for now)
-    return f"Form submitted successfully! Location: {location}, Plant Type: {plant_type}, Plot Size: {plot_size}, Harvest Month: {harvest_month}"
-
-
-# ------
-@app.route('/view_image/<filename>')
-def view_image(filename):
+def create_app():
+    """Create and configure the Flask application"""
+    app = Flask(__name__)
     
-    return render_template('imageResultsPage.html', filename=filename)
+    # Initialize FarmingAnalyzer with Gemini API key
+    analyzer = FarmingAnalyzer()
 
-@app.route('/analysis') #link in js
-def analysis():
-    return render_template('FarmingAnalysis.html')
+    # Initialize or train the model
+    try:
+        analyzer.load_model()
+        print("Model loaded successfully")
+    except Exception as e:
+        print(f"Error initializing model: {e}")
+        print(f"Error loading model: {e}")
+        print("Training new model...")
+        analyzer.train_model('cape_town.csv')
+
+    @app.route('/')
+    def landing():
+        """Landing page route"""
+        return render_template('index.html')
+
+    @app.route('/form')
+    def form():
+        """Form page route"""
+        return render_template('farmingAnalysis.html')
+
+    @app.route('/analysis')
+    def analysis():
+        """Analysis page route"""
+        return render_template('FarmingAnalysis.html')
+
+    @app.route('/upload', methods=['GET', 'POST'])
+    def upload():
+        """Handle image upload and analysis"""
+        if request.method == 'POST':
+            try:
+                # Get form data
+                image_type = request.form['imageType']
+                image_file = request.files['imageUpload']
+                
+                # Save the image
+                saved_path = save_image(image_file)
+                
+                if not saved_path:
+                    return render_template('ImageAnalysis.html', error="Failed to save image")
+                
+                try:
+                    # Process the image with Gemini
+                    analysis_result = process_image_with_gemini(saved_path)
+                    
+                    # Clean up - delete the image after processing
+                    try:
+                        os.remove(saved_path)
+                        print(f"Successfully deleted {saved_path}")
+                    except Exception as e:
+                        print(f"Warning: Error deleting file: {e}")
+                    
+                    return render_template(
+                        'analysis_result.html',
+                        analysis=analysis_result,
+                        image_type=image_type
+                    )
+                
+                except Exception as e:
+                    # Clean up on error
+                    if os.path.exists(saved_path):
+                        os.remove(saved_path)
+                    raise e
+                    
+            except Exception as e:
+                return render_template(
+                    'ImageAnalysis.html',
+                    error=f"Error processing image: {str(e)}"
+                )
+                
+        return render_template('ImageAnalysis.html')
+
+    @app.route('/submit_form', methods=['POST'])
+    def submit_form():
+        """Handle form submission and generate predictions"""
+        try:
+            # Get form data
+            input_data = {
+                'location': request.form.get('location'),
+                'plant_type': request.form.get('plantType'),
+                'plot_size': request.form.get('plotSize'),
+                'harvest_month': request.form.get('harvestMonth')
+            }
+
+            # Validate required fields
+            if not input_data['location'] or not input_data['plant_type']:
+                return "Error: Location and Plant Type are required!", 400
+
+            # Make prediction
+            prediction = analyzer.predict(input_data)
+            
+            # Get AI recommendations
+            ai_recommendations = analyzer.get_ai_recommendations(input_data, prediction)
+
+            return render_template(
+                'prediction_result.html',
+                location=input_data['location'],
+                plant_type=input_data['plant_type'],
+                plot_size=input_data['plot_size'],
+                harvest_month=input_data['harvest_month'],
+                yield_prediction=prediction['yield_prediction'],
+                success_rating=prediction['success_rating'],
+                ai_recommendations=ai_recommendations
+            )
+
+        except Exception as e:
+            return f"Error processing request: {str(e)}", 500
+
+    @app.route('/view_image/<filename>')
+    def view_image(filename):
+        """View processed image results"""
+        return render_template('imageResultsPage.html', filename=filename)
+
+    return app
+
+# Create the Flask application
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)

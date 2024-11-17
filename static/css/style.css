@@ -142,4 +142,10 @@ select {
 button:hover {
     background-color: #0056b3;
 }
+<<<<<<< HEAD
+=======
+p {
+    display: block;
+}
+>>>>>>> 7803547 (update)
 }

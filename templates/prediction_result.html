@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farming Analysis Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="max-w-4xl mx-auto px-4">
+                <h1 class="text-3xl font-bold text-green-700">Farming Analysis Results</h1>
+                <p class="text-gray-600 mt-2">Here's what our analysis shows for your farming project</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-4xl mx-auto px-4">
+            <!-- Input Summary Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Farming Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-gray-600">Location</p>
+                        <p class="font-medium">{{ location or 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Plant Type</p>
+                        <p class="font-medium">{{ plant_type or 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Plot Size</p>
+                        <p class="font-medium">{{ plot_size or 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Harvest Month</p>
+                        <p class="font-medium">{{ harvest_month or 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Predictions</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Yield Prediction -->
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h3 class="font-medium text-green-800 mb-2">Expected Yield</h3>
+                        <p class="text-3xl font-bold text-green-700">{{ yield_prediction or 'N/A' }}</p>
+                    </div>
+                    
+                    <!-- Success Rating -->
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h3 class="font-medium text-blue-800 mb-2">Success Rating</h3>
+                        <div class="flex items-center">
+                            <span class="text-3xl font-bold text-blue-700">{{ success_rating or '0' }}%</span>
+                            <div class="ml-3 flex-1 h-4 bg-blue-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-600 rounded-full" style="width: {{ success_rating or '0' }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Recommendations Card -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">AI Recommendations</h2>
+                <div class="space-y-4">
+                    {% if ai_recommendations %}
+                        <p class="text-gray-700">{{ ai_recommendations }}</p>
+                    {% else %}
+                        <p class="text-gray-500">No AI recommendations available at the moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex justify-center space-x-4">
+                <a href="/form" class="inline-flex items-center px-6 py-3 border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition-colors">
+                    Start New Analysis
+                </a>
+                <a href="/" class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                    Back to Home
+                </a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
