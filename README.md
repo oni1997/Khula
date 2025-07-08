@@ -54,7 +54,7 @@ Khula is an AI-powered farming assistant that provides comprehensive tools for m
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone git@github.com:oni1997/Khula.git
 cd Khula
 ```
 
