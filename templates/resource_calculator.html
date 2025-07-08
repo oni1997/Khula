@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Calculator - Khula</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather">Weather</a></li>
+                <li><a href="/market">Market</a></li>
+                <li><a href="/calendar">Calendar</a></li>
+                <li><a href="/calculator" class="active">Calculator</a></li>
+                <li><a href="/community">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="fade-in">
+            <h1 class="text-center mb-4">🧮 Resource Calculator</h1>
+            <p class="text-center mb-4" style="color: var(--gray-600); font-size: 1.1rem;">
+                Calculate fertilizer, water, seed requirements and costs for your farming project
+            </p>
+
+            <div class="card">
+                <h2>📊 Farm Details</h2>
+                <form id="calculatorForm" class="grid-2">
+                    <div class="form-group">
+                        <label for="cropType">Crop Type</label>
+                        <select id="cropType" name="cropType" class="form-control" required>
+                            <option value="">Select Crop</option>
+                            <option value="maize">Maize</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="soybeans">Soybeans</option>
+                            <option value="potatoes">Potatoes</option>
+                            <option value="tomatoes">Tomatoes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plotSize">Plot Size (hectares)</label>
+                        <input type="number" id="plotSize" name="plotSize" class="form-control" placeholder="e.g., 5.5" step="0.1" min="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="soilType">Soil Type</label>
+                        <select id="soilType" name="soilType" class="form-control" required>
+                            <option value="">Select Soil Type</option>
+                            <option value="poor">Poor</option>
+                            <option value="medium">Medium</option>
+                            <option value="rich">Rich</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="irrigationType">Irrigation Type</label>
+                        <select id="irrigationType" name="irrigationType" class="form-control" required>
+                            <option value="">Select Irrigation</option>
+                            <option value="drip">Drip Irrigation</option>
+                            <option value="sprinkler">Sprinkler</option>
+                            <option value="flood">Flood Irrigation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="form-control" placeholder="e.g., Cape Town" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget (Optional)</label>
+                        <input type="number" id="budget" name="budget" class="form-control" placeholder="e.g., 50000" min="0">
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary w-100">
+                            🧮 Calculate Resources
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="calculationResults" class="card" style="display: none;">
+                <h2>📋 Resource Requirements</h2>
+                <div id="resourcesContent">
+                    <!-- Resources will be populated here -->
+                </div>
+            </div>
+
+            <div id="recommendationsResults" class="card" style="display: none;">
+                <h2>🤖 AI Recommendations</h2>
+                <div id="recommendationsContent" class="p-3" style="background: var(--earth-cream); border-radius: 8px; white-space: pre-wrap; line-height: 1.6;">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Calculating resource requirements...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculatorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('calculationResults').style.display = 'none';
+            document.getElementById('recommendationsResults').style.display = 'none';
+
+            try {
+                // First get basic calculations
+                const calcResponse = await fetch('/api/calculate/resources', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        crop_type: data.cropType,
+                        plot_size_ha: parseFloat(data.plotSize),
+                        soil_type: data.soilType,
+                        irrigation_type: data.irrigationType
+                    })
+                });
+
+                if (calcResponse.ok) {
+                    const calcResult = await calcResponse.json();
+                    displayCalculations(calcResult);
+
+                    // Then get AI recommendations
+                    const recResponse = await fetch('/api/calculate/recommendations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            crop_type: data.cropType,
+                            plot_size_ha: parseFloat(data.plotSize),
+                            soil_type: data.soilType,
+                            location: data.location,
+                            budget: data.budget ? parseFloat(data.budget) : null
+                        })
+                    });
+
+                    if (recResponse.ok) {
+                        const recResult = await recResponse.json();
+                        displayRecommendations(recResult);
+                    }
+                } else {
+                    throw new Error('Calculation failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('resourcesContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> Unable to calculate resources. Please try again.
+                    </div>
+                `;
+                document.getElementById('calculationResults').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        function displayCalculations(result) {
+            if (typeof result === 'string') {
+                document.getElementById('resourcesContent').innerHTML = `
+                    <div class="alert alert-warning">
+                        ${result}
+                    </div>
+                `;
+            } else {
+                const resources = result.resources;
+                const content = `
+                    <div class="grid-4 mb-4">
+                        <div class="text-center p-3" style="background: var(--success); color: white; border-radius: 8px;">
+                            <h4>🌱 Seeds</h4>
+                            <p>${resources.seeds.amount} ${resources.seeds.unit}</p>
+                            <small>R${resources.seeds.cost}</small>
+                        </div>
+                        <div class="text-center p-3" style="background: var(--earth-brown); color: white; border-radius: 8px;">
+                            <h4>🧪 Fertilizer</h4>
+                            <p>Total Cost</p>
+                            <small>R${result.cost_breakdown.fertilizer}</small>
+                        </div>
+                        <div class="text-center p-3" style="background: var(--sky-blue); color: white; border-radius: 8px;">
+                            <h4>💧 Water</h4>
+                            <p>${resources.water.amount} ${resources.water.unit}</p>
+                            <small>R${resources.water.cost}</small>
+                        </div>
+                        <div class="text-center p-3" style="background: var(--sunset-orange); color: white; border-radius: 8px;">
+                            <h4>👷 Labor</h4>
+                            <p>${resources.labor.amount} ${resources.labor.unit}</p>
+                            <small>R${resources.labor.cost}</small>
+                        </div>
+                    </div>
+
+                    <div class="text-center p-4" style="background: var(--primary-green); color: white; border-radius: 12px; font-size: 1.2rem;">
+                        <h3>💰 Total Estimated Cost: R${result.total_cost.toLocaleString()}</h3>
+                    </div>
+                `;
+
+                document.getElementById('resourcesContent').innerHTML = content;
+            }
+
+            document.getElementById('calculationResults').style.display = 'block';
+        }
+
+        function displayRecommendations(result) {
+            if (result.ai_recommendations) {
+                document.getElementById('recommendationsContent').textContent = result.ai_recommendations;
+                document.getElementById('recommendationsResults').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

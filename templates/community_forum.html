@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forum - Khula</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather">Weather</a></li>
+                <li><a href="/market">Market</a></li>
+                <li><a href="/calendar">Calendar</a></li>
+                <li><a href="/calculator">Calculator</a></li>
+                <li><a href="/community" class="active">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="fade-in">
+            <h1 class="text-center mb-4">👥 Community Forum</h1>
+            <p class="text-center mb-4" style="color: var(--gray-600); font-size: 1.1rem;">
+                Connect with fellow farmers, share knowledge, and get expert advice
+            </p>
+
+            <!-- Ask AI Assistant -->
+            <div class="card">
+                <h2>🤖 Ask AI Farming Assistant</h2>
+                <form id="aiQuestionForm">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" class="form-control">
+                            <option value="general">General Farming</option>
+                            <option value="crop_management">Crop Management</option>
+                            <option value="pest_control">Pest Control</option>
+                            <option value="soil_health">Soil Health</option>
+                            <option value="irrigation">Irrigation</option>
+                            <option value="market_prices">Market Prices</option>
+                            <option value="equipment">Equipment</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question">Your Question</label>
+                        <textarea id="question" name="question" class="form-control" rows="3" placeholder="Ask any farming-related question..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        🤖 Get AI Advice
+                    </button>
+                </form>
+
+                <div id="aiResponse" class="mt-4" style="display: none;">
+                    <h3>💡 AI Response</h3>
+                    <div id="aiResponseContent" class="p-3" style="background: var(--sky-blue-light); border-radius: 8px; white-space: pre-wrap; line-height: 1.6;">
+                        <!-- AI response will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create New Post -->
+            <div class="card">
+                <h2>✍️ Share with Community</h2>
+                <form id="newPostForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="postTitle">Title</label>
+                            <input type="text" id="postTitle" name="title" class="form-control" placeholder="What's your topic?" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="postCategory">Category</label>
+                            <select id="postCategory" name="category" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="crop_management">Crop Management</option>
+                                <option value="pest_control">Pest Control</option>
+                                <option value="soil_health">Soil Health</option>
+                                <option value="irrigation">Irrigation</option>
+                                <option value="market_prices">Market Prices</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="success_stories">Success Stories</option>
+                                <option value="questions_help">Questions & Help</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postContent">Content</label>
+                        <textarea id="postContent" name="content" class="form-control" rows="4" placeholder="Share your knowledge, ask questions, or tell your story..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary">
+                        📝 Create Post
+                    </button>
+                </form>
+            </div>
+
+            <!-- Community Posts -->
+            <div class="card">
+                <h2>📋 Recent Community Posts</h2>
+
+                <div class="mb-3">
+                    <label for="filterCategory">Filter by Category:</label>
+                    <select id="filterCategory" class="form-control" style="max-width: 300px;">
+                        <option value="">All Categories</option>
+                        <option value="crop_management">Crop Management</option>
+                        <option value="pest_control">Pest Control</option>
+                        <option value="soil_health">Soil Health</option>
+                        <option value="irrigation">Irrigation</option>
+                        <option value="market_prices">Market Prices</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="success_stories">Success Stories</option>
+                        <option value="questions_help">Questions & Help</option>
+                    </select>
+                </div>
+
+                <div id="postsContainer">
+                    <!-- Posts will be populated here -->
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ask AI Assistant
+        document.getElementById('aiQuestionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('aiResponse').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/ai/advice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('aiResponseContent').textContent = result.advice;
+                    document.getElementById('aiResponse').style.display = 'block';
+                } else {
+                    throw new Error('Failed to get AI advice');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('aiResponseContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        Unable to get AI advice. Please try again.
+                    </div>
+                `;
+                document.getElementById('aiResponse').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        // Create new post
+        document.getElementById('newPostForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            data.user_id = 'demo_user'; // In a real app, this would come from authentication
+
+            try {
+                const response = await fetch('/api/forum/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Post created successfully!');
+                        this.reset();
+                        loadPosts(); // Reload posts
+                    } else {
+                        alert('Error: ' + result.error);
+                    }
+                } else {
+                    throw new Error('Failed to create post');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Unable to create post. Please try again.');
+            }
+        });
+
+        // Load posts
+        async function loadPosts(category = '') {
+            try {
+                const url = category ? `/api/forum/posts?category=${category}` : '/api/forum/posts';
+                const response = await fetch(url);
+
+                if (response.ok) {
+                    const posts = await response.json();
+                    displayPosts(posts);
+                } else {
+                    throw new Error('Failed to load posts');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('postsContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        Unable to load posts. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById('postsContainer');
+
+            if (posts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-4" style="background: var(--gray-100); border-radius: 8px;">
+                        <p>No posts found. Be the first to share!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const postsHtml = posts.map(post => `
+                <div class="p-3 mb-3" style="background: var(--earth-cream); border-radius: 8px; border-left: 4px solid var(--primary-green);">
+                    <div class="d-flex justify-between align-center mb-2">
+                        <h4 style="color: var(--primary-green);">${post.title}</h4>
+                        <span class="badge" style="background: var(--sky-blue); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                            ${post.category.replace('_', ' ')}
+                        </span>
+                    </div>
+                    <p style="color: var(--gray-700);">${post.content}</p>
+                    <small style="color: var(--gray-500);">
+                        Posted on ${new Date(post.created_at).toLocaleDateString()}
+                        ${post.ai_summary ? `• ${post.ai_summary}` : ''}
+                    </small>
+                </div>
+            `).join('');
+
+            container.innerHTML = postsHtml;
+        }
+
+        // Filter posts by category
+        document.getElementById('filterCategory').addEventListener('change', function() {
+            loadPosts(this.value);
+        });
+
+        // Load posts on page load
+        window.onload = function() {
+            loadPosts();
+        };
+    </script>
+</body>
+</html>

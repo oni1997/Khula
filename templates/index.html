@@ -3,41 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khula</title>
-
-
+    <title>Khula - Smart Farming Assistant</title>
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<div class="logo-container">
-    <img src="..//static/uploads/logo-fotor-bg-remover-202411177366.png" alt="Farming Assistant Logo">
-</div>
 <body>
-    <div class="container">
-        <!-- <h1>Welcome to <span class="plant-green">KHULA</span></h1> -->
-        <h2> Smart, up-to-date Data for your next farming project!</h2>
-        <p>Please select an option that best describes your needs:</p>
-
-        <div class="button-container">
-            <!-- Upload Image Button -->
-            <a href="/upload_image" class="image-button">
-                <img src="..//static/uploads/sprout.gif" alt="Upload Image">
-                <!-- <span>Upload Crop/Soil Image</span> -->
-            </a>
-        
-            <!-- Condition Analysis Button -->
-            <a href="/condition_analysis" class="image-button">
-                <img src="..//static/uploads/organic(2).gif" alt="Condition Analysis">
-                <!-- <span>Condition Analysis</span> -->
-            </a>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather">Weather</a></li>
+                <li><a href="/market">Market</a></li>
+                <li><a href="/calendar">Calendar</a></li>
+                <li><a href="/calculator">Calculator</a></li>
+                <li><a href="/community">Community</a></li>
+            </ul>
         </div>
+    </nav>
 
-        <div class="buttons">
-            <button id="uploadButton">Analyse your image</button>
-            <button id="analysisButton">Analyse farming Data </button>
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="landing-container fade-in">
+            <div class="logo-container">
+                <img src="../static/uploads/logo-fotor-bg-remover-202411177366.png" alt="Farming Assistant Logo" style="max-width: 150px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">
+            </div>
+
+            <h1>Welcome to Khula</h1>
+            <h2>Your AI-Powered Smart Farming Assistant</h2>
+            <p style="font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto 2rem;">
+                Empowering farmers with real-time weather data, market insights, planting schedules,
+                resource calculations, and community knowledge sharing.
+            </p>
+
+            <div class="buttons">
+                <button id="uploadButton" class="btn btn-primary">
+                    📸 Analyze Your Image
+                </button>
+                <button id="analysisButton" class="btn btn-secondary">
+                    📊 Analyze Farming Data
+                </button>
+            </div>
+
+            <!-- Feature Grid -->
+            <div class="new-features slide-up">
+                <h3>🚀 Smart Farming Tools</h3>
+                <div class="feature-grid">
+                    <button class="feature-btn" onclick="window.location.href='/weather'">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌤️</div>
+                            <div>Weather Dashboard</div>
+                            <small style="opacity: 0.8;">Real-time weather & forecasts</small>
+                        </div>
+                    </button>
+                    <button class="feature-btn" onclick="window.location.href='/market'">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+                            <div>Market Prices</div>
+                            <small style="opacity: 0.8;">Current crop prices & trends</small>
+                        </div>
+                    </button>
+                    <button class="feature-btn" onclick="window.location.href='/calendar'">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                            <div>Planting Calendar</div>
+                            <small style="opacity: 0.8;">Optimal planting schedules</small>
+                        </div>
+                    </button>
+                    <button class="feature-btn" onclick="window.location.href='/calculator'">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🧮</div>
+                            <div>Resource Calculator</div>
+                            <small style="opacity: 0.8;">Seeds, fertilizer & water needs</small>
+                        </div>
+                    </button>
+                    <button class="feature-btn" onclick="window.location.href='/community'">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+                            <div>Community Forum</div>
+                            <small style="opacity: 0.8;">Connect with other farmers</small>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Overview -->
+            <div class="card mt-4">
+                <h3 class="text-center mb-3">Why Choose Khula?</h3>
+                <div class="grid-3">
+                    <div class="text-center p-2">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
+                        <h4>AI-Powered</h4>
+                        <p>Advanced AI analysis using Google Gemini for intelligent farming insights</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌍</div>
+                        <h4>Real-Time Data</h4>
+                        <p>Live weather data and market prices to make informed decisions</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📱</div>
+                        <h4>Easy to Use</h4>
+                        <p>Simple, intuitive interface designed for farmers of all experience levels</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="../static/js/app.js"></script>
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            window.location.href = '/upload';
+        });
+
+        document.getElementById('analysisButton').addEventListener('click', function() {
+            window.location.href = '/form';
+        });
+
+        // Add smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add staggered animation to feature cards
+            const featureButtons = document.querySelectorAll('.feature-btn');
+            featureButtons.forEach((btn, index) => {
+                btn.style.animationDelay = `${index * 0.1}s`;
+                btn.classList.add('fade-in');
+            });
+        });
+    </script>
 </body>
 </html>
 

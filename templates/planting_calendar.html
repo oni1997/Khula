@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planting Calendar - Khula</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather">Weather</a></li>
+                <li><a href="/market">Market</a></li>
+                <li><a href="/calendar" class="active">Calendar</a></li>
+                <li><a href="/calculator">Calculator</a></li>
+                <li><a href="/community">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="fade-in">
+            <h1 class="text-center mb-4">📅 Planting Calendar</h1>
+            <p class="text-center mb-4" style="color: var(--gray-600); font-size: 1.1rem;">
+                Get optimal planting and harvesting schedules based on your location and crop type
+            </p>
+
+            <div class="card">
+                <h2>🌱 Create Planting Schedule</h2>
+                <form id="calendarForm" class="grid-2">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="form-control" placeholder="e.g., Cape Town" value="Cape Town" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cropType">Crop Type</label>
+                        <select id="cropType" name="cropType" class="form-control" required>
+                            <option value="">Select Crop</option>
+                            <option value="maize">Maize</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="soybeans">Soybeans</option>
+                            <option value="sunflower">Sunflower</option>
+                            <option value="potatoes">Potatoes</option>
+                            <option value="tomatoes">Tomatoes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plotSize">Plot Size (hectares)</label>
+                        <input type="number" id="plotSize" name="plotSize" class="form-control" placeholder="e.g., 5.5" step="0.1" min="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="farmingType">Farming Type</label>
+                        <select id="farmingType" name="farmingType" class="form-control">
+                            <option value="commercial">Commercial</option>
+                            <option value="subsistence">Subsistence</option>
+                            <option value="organic">Organic</option>
+                            <option value="mixed">Mixed Farming</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary w-100">
+                            📅 Generate Planting Calendar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="calendarResults" class="card" style="display: none;">
+                <h2>📋 Your Planting Schedule</h2>
+                <div id="scheduleContent">
+                    <!-- Schedule will be populated here -->
+                </div>
+            </div>
+
+            <div id="cropInfo" class="card" style="display: none;">
+                <h2>🌾 Crop Information</h2>
+                <div id="cropInfoContent" class="grid-2">
+                    <!-- Crop info will be populated here -->
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Generating your planting calendar...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calendarForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('calendarResults').style.display = 'none';
+            document.getElementById('cropInfo').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/planting/schedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        crop_type: data.cropType,
+                        location: data.location,
+                        plot_size: data.plotSize
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displaySchedule(result);
+                } else {
+                    throw new Error('Failed to generate calendar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('scheduleContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> Unable to generate planting calendar. Please try again.
+                    </div>
+                `;
+                document.getElementById('calendarResults').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        function displaySchedule(result) {
+            // Display crop information
+            if (result.crop_info) {
+                const cropInfo = result.crop_info;
+                document.getElementById('cropInfoContent').innerHTML = `
+                    <div class="text-center p-3" style="background: var(--earth-cream); border-radius: 8px;">
+                        <h4>🌱 Planting Season</h4>
+                        <p>${cropInfo.planting_season}</p>
+                    </div>
+                    <div class="text-center p-3" style="background: var(--earth-cream); border-radius: 8px;">
+                        <h4>🌾 Harvest Season</h4>
+                        <p>${cropInfo.harvest_season}</p>
+                    </div>
+                    <div class="text-center p-3" style="background: var(--earth-cream); border-radius: 8px;">
+                        <h4>⏱️ Growing Days</h4>
+                        <p>${cropInfo.growing_days} days</p>
+                    </div>
+                    <div class="text-center p-3" style="background: var(--earth-cream); border-radius: 8px;">
+                        <h4>🌡️ Optimal Temperature</h4>
+                        <p>${cropInfo.optimal_temp}</p>
+                    </div>
+                `;
+                document.getElementById('cropInfo').style.display = 'block';
+            }
+
+            // Display AI recommendations
+            const scheduleContent = `
+                <div class="p-3" style="background: var(--sky-blue-light); border-radius: 8px; white-space: pre-wrap; line-height: 1.6;">
+                    ${result.ai_recommendations || result.recommendation || 'No recommendations available'}
+                </div>
+            `;
+
+            document.getElementById('scheduleContent').innerHTML = scheduleContent;
+            document.getElementById('calendarResults').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

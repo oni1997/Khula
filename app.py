@@ -1,8 +1,15 @@
 import os
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, jsonify, session
 from FarmingAnalysis import FarmingAnalyzer
 from imageAnalysis import process_image_with_gemini
 from image_handler import save_image
+
+# Import new services
+from weather_service import weather_service
+from market_service import market_service
+from planting_calendar import planting_service
+from resource_calculator import resource_calculator
+from community_service import community_service
 
 # Load environment variables
 
@@ -18,10 +25,13 @@ def create_app():
         analyzer.load_model()
         print("Model loaded successfully")
     except Exception as e:
-        print(f"Error initializing model: {e}")
         print(f"Error loading model: {e}")
-        print("Training new model...")
-        analyzer.train_model('cape_town.csv')
+        print("Training new model with simulated data...")
+        try:
+            analyzer.train_model_with_simulated_data()
+        except Exception as train_error:
+            print(f"Error training model: {train_error}")
+            print("Continuing without ML model - using basic predictions")
 
     @app.route('/')
     def landing():
@@ -124,6 +134,131 @@ def create_app():
     def view_image(filename):
         """View processed image results"""
         return render_template('imageResultsPage.html', filename=filename)
+
+    # Weather Routes
+    @app.route('/weather')
+    def weather_dashboard():
+        """Weather dashboard page"""
+        return render_template('weather_dashboard.html')
+
+    @app.route('/api/weather/<location>')
+    def get_weather_api(location):
+        """API endpoint for weather data"""
+        weather_data = weather_service.get_current_weather(location)
+        return jsonify(weather_data)
+
+    @app.route('/api/weather/analysis/<location>/<crop_type>')
+    def get_weather_analysis_api(location, crop_type):
+        """API endpoint for weather analysis"""
+        try:
+            analysis = weather_service.get_farming_weather_analysis(location, crop_type)
+            if analysis:
+                return jsonify({'analysis': analysis})
+            else:
+                return jsonify({'error': 'Unable to generate weather analysis'}), 500
+        except Exception as e:
+            return jsonify({'error': f'Weather analysis error: {str(e)}'}), 500
+
+    # Market Routes
+    @app.route('/market')
+    def market_dashboard():
+        """Market prices dashboard"""
+        return render_template('market_dashboard.html')
+
+    @app.route('/api/market/prices')
+    def get_market_prices_api():
+        """API endpoint for market prices"""
+        prices = market_service.get_simulated_market_prices()
+        return jsonify(prices)
+
+    @app.route('/api/market/analysis/<crop_type>')
+    def get_market_analysis_api(crop_type):
+        """API endpoint for market analysis"""
+        analysis = market_service.get_market_analysis(crop_type)
+        return jsonify({'analysis': analysis})
+
+    # Planting Calendar Routes
+    @app.route('/calendar')
+    def planting_calendar():
+        """Planting calendar page"""
+        return render_template('planting_calendar.html')
+
+    @app.route('/api/planting/schedule', methods=['POST'])
+    def create_planting_schedule():
+        """Create planting schedule"""
+        data = request.get_json()
+        schedule = planting_service.get_optimal_planting_dates(
+            data['crop_type'],
+            data['location'],
+            data.get('plot_size')
+        )
+        return jsonify(schedule)
+
+    # Resource Calculator Routes
+    @app.route('/calculator')
+    def resource_calculator_page():
+        """Resource calculator page"""
+        return render_template('resource_calculator.html')
+
+    @app.route('/api/calculate/resources', methods=['POST'])
+    def calculate_resources_api():
+        """Calculate resource requirements"""
+        data = request.get_json()
+        calculations = resource_calculator.calculate_resources(
+            data['crop_type'],
+            data['plot_size_ha'],
+            data.get('soil_type', 'medium'),
+            data.get('irrigation_type', 'drip')
+        )
+        return jsonify(calculations)
+
+    @app.route('/api/calculate/recommendations', methods=['POST'])
+    def get_resource_recommendations():
+        """Get AI resource recommendations"""
+        data = request.get_json()
+        recommendations = resource_calculator.get_ai_resource_recommendations(
+            data['crop_type'],
+            data['plot_size_ha'],
+            data['soil_type'],
+            data['location'],
+            data.get('budget')
+        )
+        return jsonify(recommendations)
+
+    # Community Routes
+    @app.route('/community')
+    def community_forum():
+        """Community forum page"""
+        return render_template('community_forum.html')
+
+    @app.route('/api/forum/posts')
+    def get_forum_posts():
+        """Get forum posts"""
+        category = request.args.get('category')
+        posts = community_service.get_forum_posts(category)
+        return jsonify(posts)
+
+    @app.route('/api/forum/post', methods=['POST'])
+    def create_forum_post():
+        """Create a new forum post"""
+        data = request.get_json()
+        result = community_service.create_forum_post(
+            data['user_id'],
+            data['title'],
+            data['content'],
+            data['category']
+        )
+        return jsonify(result)
+
+    @app.route('/api/ai/advice', methods=['POST'])
+    def get_ai_advice():
+        """Get AI farming advice"""
+        data = request.get_json()
+        advice = community_service.get_ai_farming_advice(
+            data['question'],
+            data.get('category', 'general')
+        )
+        return jsonify({'advice': advice})
 
     return app
 

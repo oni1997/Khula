@@ -81,28 +81,58 @@ class FarmingAnalyzer:
     def train_model(self, data_path: str) -> float:
         df = pd.read_csv(data_path)
         df_processed = self.preprocess_data(df)
-        
+
         features = ['Rainfall_mm', 'Avg_Temp_C', 'Soil_Moisture_Percentage',
                     'Growing_Days', 'Soil_pH', 'Fertilizer_Usage_kg_per_ha',
                     'Season', 'Drought_Status', 'Pest_Pressure', 'Disease_Pressure']
-        
+
         target = ['Yield_Tons_Per_Hectare', 'Success_Rating']
-        
+
         X = df_processed[features]
         y = df[target]
-        
+
         y_scaled = self.target_scaler.fit_transform(y)
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y_scaled, 
-                                                            test_size=0.2, 
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y_scaled,
+                                                            test_size=0.2,
                                                             random_state=42)
-        
+
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         self.model.fit(X_train, y_train)
-        
+
         self.save_model()
-        
+
         return self.model.score(X_test, y_test)
+
+    def train_model_with_simulated_data(self) -> float:
+        """Train model using simulated data instead of CSV file"""
+        print("Generating simulated training data...")
+        df = self._load_training_data()
+        df_processed = self.preprocess_data(df)
+
+        features = ['Rainfall_mm', 'Avg_Temp_C', 'Soil_Moisture_Percentage',
+                    'Growing_Days', 'Soil_pH', 'Fertilizer_Usage_kg_per_ha',
+                    'Season', 'Drought_Status', 'Pest_Pressure', 'Disease_Pressure']
+
+        target = ['Yield_per_hectare', 'Success_Rating']
+
+        X = df_processed[features]
+        y = df[target]
+
+        y_scaled = self.target_scaler.fit_transform(y)
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y_scaled,
+                                                            test_size=0.2,
+                                                            random_state=42)
+
+        self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.model.fit(X_train, y_train)
+
+        self.save_model()
+
+        score = self.model.score(X_test, y_test)
+        print(f"Model trained successfully with score: {score:.3f}")
+        return score
 
     def get_ai_recommendations(self, input_data: Dict[str, Any], prediction: Dict[str, float]) -> str:
         """Get personalized recommendations from Gemini AI"""

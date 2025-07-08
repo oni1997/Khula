@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices - Khula</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather">Weather</a></li>
+                <li><a href="/market" class="active">Market</a></li>
+                <li><a href="/calendar">Calendar</a></li>
+                <li><a href="/calculator">Calculator</a></li>
+                <li><a href="/community">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="fade-in">
+            <h1 class="text-center mb-4">📈 Market Prices Dashboard</h1>
+            <p class="text-center mb-4" style="color: #666; font-size: 1.1rem;">
+                Stay updated with current crop prices and market trends
+            </p>
+
+            <div class="card">
+                <h2>💰 Current Crop Prices</h2>
+                <div class="grid-3" id="pricesGrid">
+                    <!-- Price cards will be populated here -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🤖 AI Market Analysis</h2>
+                <div class="form-group">
+                    <label for="cropSelector">Select Crop for Analysis</label>
+                    <div class="d-flex" style="gap: 1rem;">
+                        <select id="cropSelector" class="form-control">
+                            <option value="maize">Maize</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="soybeans">Soybeans</option>
+                            <option value="sunflower">Sunflower</option>
+                            <option value="potatoes">Potatoes</option>
+                            <option value="tomatoes">Tomatoes</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="loadMarketAnalysis()">
+                            📊 Get Analysis
+                        </button>
+                    </div>
+                </div>
+                <div id="analysisContent" class="p-3 mt-3" style="background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; line-height: 1.6; min-height: 200px;">
+                    <!-- Analysis will be populated here -->
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Loading market data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadMarketPrices() {
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('/api/market/prices');
+                const prices = await response.json();
+                displayPrices(prices);
+            } catch (error) {
+                console.error('Error loading market prices:', error);
+                alert('Error loading market prices. Please try again.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayPrices(prices) {
+            const pricesGrid = document.getElementById('pricesGrid');
+            pricesGrid.innerHTML = '';
+
+            Object.entries(prices).forEach(([crop, data]) => {
+                const priceCard = document.createElement('div');
+                const changeClass = data.change >= 0 ? 'status-positive' : 'status-negative';
+                const changeSymbol = data.change >= 0 ? '+' : '';
+                const borderColor = data.change >= 0 ? '#28a745' : '#dc3545';
+
+                priceCard.className = 'text-center p-3';
+                priceCard.style.background = 'rgba(255, 255, 255, 0.8)';
+                priceCard.style.borderRadius = '12px';
+                priceCard.style.border = `3px solid ${borderColor}`;
+                priceCard.style.transition = 'transform 0.3s ease';
+
+                priceCard.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌾</div>
+                    <h3 style="margin-bottom: 0.5rem; text-transform: capitalize; color: #333;">${crop}</h3>
+                    <div style="font-size: 1.8rem; font-weight: bold; color: #2cb42c; margin-bottom: 0.5rem;">
+                        R${data.price.toLocaleString()}
+                    </div>
+                    <small style="color: #666; display: block; margin-bottom: 0.5rem;">${data.unit}</small>
+                    <div class="${changeClass}" style="font-weight: 600;">
+                        ${changeSymbol}${data.change}%
+                    </div>
+                `;
+
+                priceCard.addEventListener('mouseenter', () => {
+                    priceCard.style.transform = 'translateY(-5px)';
+                });
+
+                priceCard.addEventListener('mouseleave', () => {
+                    priceCard.style.transform = 'translateY(0)';
+                });
+
+                pricesGrid.appendChild(priceCard);
+            });
+        }
+
+        async function loadMarketAnalysis() {
+            const crop = document.getElementById('cropSelector').value;
+            const analysisContent = document.getElementById('analysisContent');
+
+            analysisContent.innerHTML = '<div class="loading">Loading analysis...</div>';
+
+            try {
+                const response = await fetch(`/api/market/analysis/${crop}`);
+                const data = await response.json();
+                analysisContent.textContent = data.analysis;
+            } catch (error) {
+                console.error('Error loading market analysis:', error);
+                analysisContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> Unable to load market analysis. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Load data on page load
+        window.onload = function() {
+            loadMarketPrices();
+            loadMarketAnalysis();
+        };
+    </script>
+</body>
+</html>

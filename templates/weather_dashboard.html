@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard - Khula</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">🌱 Khula</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/weather" class="active">Weather</a></li>
+                <li><a href="/market">Market</a></li>
+                <li><a href="/calendar">Calendar</a></li>
+                <li><a href="/calculator">Calculator</a></li>
+                <li><a href="/community">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="fade-in">
+            <h1 class="text-center mb-4">🌤️ Weather Dashboard</h1>
+            <p class="text-center mb-4" style="color: #666; font-size: 1.1rem;">
+                Get real-time weather data and AI-powered farming insights for your location
+            </p>
+
+            <div class="card">
+                <div class="form-group">
+                    <div class="grid-2">
+                        <div>
+                            <label for="locationInput">Location</label>
+                            <input type="text" id="locationInput" class="form-control" placeholder="Enter location (e.g., Cape Town)" value="Cape Town">
+                        </div>
+                        <div>
+                            <label for="cropInput">Crop Type</label>
+                            <input type="text" id="cropInput" class="form-control" placeholder="Crop type (e.g., maize)" value="maize">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3 w-100" onclick="loadWeatherData()">
+                        🔄 Get Weather Data
+                    </button>
+                </div>
+            </div>
+
+            <div id="weatherData" class="card" style="display: none;">
+                <h2>📊 Current Weather</h2>
+                <div class="grid-4">
+                    <div class="text-center p-2">
+                        <div style="font-size: 2rem; color: #ff6b35;">🌡️</div>
+                        <h3 id="currentTemp" class="status-neutral">--°C</h3>
+                        <p>Temperature</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <div style="font-size: 2rem; color: #4dabf7;">💧</div>
+                        <h3 id="currentHumidity" class="status-neutral">--%</h3>
+                        <p>Humidity</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <div style="font-size: 2rem; color: #51cf66;">🌧️</div>
+                        <h3 id="currentPrecip" class="status-neutral">-- mm</h3>
+                        <p>Precipitation</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <div style="font-size: 2rem; color: #74c0fc;">💨</div>
+                        <h3 id="currentWind" class="status-neutral">-- km/h</h3>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="forecastData" class="card" style="display: none;">
+                <h2>📅 7-Day Forecast</h2>
+                <div class="grid-4" id="forecastGrid">
+                    <!-- Forecast days will be populated here -->
+                </div>
+            </div>
+
+            <div id="analysisData" class="card" style="display: none;">
+                <h2>🤖 AI Weather Analysis</h2>
+                <div id="analysisContent" class="p-3" style="background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; line-height: 1.6;">
+                    <!-- AI analysis will be populated here -->
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <p>Loading weather data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadWeatherData() {
+            const location = document.getElementById('locationInput').value;
+            const crop = document.getElementById('cropInput').value;
+
+            if (!location) {
+                alert('Please enter a location');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('weatherData').style.display = 'none';
+            document.getElementById('forecastData').style.display = 'none';
+            document.getElementById('analysisData').style.display = 'none';
+
+            try {
+                // Get weather data
+                const weatherResponse = await fetch(`/api/weather/${encodeURIComponent(location)}`);
+                const weatherData = await weatherResponse.json();
+
+                if (weatherData) {
+                    displayCurrentWeather(weatherData);
+                    displayForecast(weatherData);
+                }
+
+                // Get AI analysis
+                if (crop) {
+                    try {
+                        const analysisResponse = await fetch(`/api/weather/analysis/${encodeURIComponent(location)}/${encodeURIComponent(crop)}`);
+                        if (analysisResponse.ok) {
+                            const analysisData = await analysisResponse.json();
+                            if (analysisData.analysis) {
+                                displayAnalysis(analysisData.analysis);
+                            } else if (analysisData.error) {
+                                displayAnalysis(`Error: ${analysisData.error}`);
+                            }
+                        } else {
+                            displayAnalysis('Weather analysis temporarily unavailable. Please try again later.');
+                        }
+                    } catch (error) {
+                        console.error('Analysis error:', error);
+                        displayAnalysis('Weather analysis temporarily unavailable. Please try again later.');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading weather data:', error);
+                alert('Error loading weather data. Please try again.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayCurrentWeather(data) {
+            document.getElementById('currentTemp').textContent = data.current.temperature + '°C';
+            document.getElementById('currentHumidity').textContent = data.current.humidity + '%';
+            document.getElementById('currentPrecip').textContent = data.current.precipitation + ' mm';
+            document.getElementById('currentWind').textContent = data.current.wind_speed + ' km/h';
+
+            document.getElementById('weatherData').style.display = 'block';
+        }
+
+        function displayForecast(data) {
+            const forecastGrid = document.getElementById('forecastGrid');
+            forecastGrid.innerHTML = '';
+
+            data.daily_forecast.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'text-center p-2';
+                dayElement.style.background = 'rgba(255, 255, 255, 0.8)';
+                dayElement.style.borderRadius = '8px';
+                dayElement.style.border = '1px solid #e1e5e9';
+
+                const date = new Date(day.date);
+                const weekday = date.toLocaleDateString('en-US', {weekday: 'short'});
+                const monthDay = date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+
+                dayElement.innerHTML = `
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌤️</div>
+                    <h4 style="margin-bottom: 0.5rem; color: #2cb42c;">${weekday}</h4>
+                    <small style="color: #666;">${monthDay}</small>
+                    <p style="margin: 0.5rem 0; font-weight: 600;">${day.temp_min}° - ${day.temp_max}°</p>
+                    <small style="color: #666;">${day.precipitation} mm</small>
+                `;
+                forecastGrid.appendChild(dayElement);
+            });
+
+            document.getElementById('forecastData').style.display = 'block';
+        }
+
+        function displayAnalysis(analysis) {
+            document.getElementById('analysisContent').textContent = analysis;
+            document.getElementById('analysisData').style.display = 'block';
+        }
+
+        // Load default data on page load
+        window.onload = function() {
+            loadWeatherData();
+        };
+    </script>
+</body>
+</html>
